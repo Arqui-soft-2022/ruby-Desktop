@@ -1,9 +1,10 @@
+require_relative 'singIn'
 require 'fox16'
 include Fox
 class Dashboard < FXMainWindow
     
     def initialize(app,dato)
-        puts app
+        @app = app
         super(app, "Qr Generator", :width => 1333, :height => 720)
         menuBar = FXMenuBar.new(self, LAYOUT_SIDE_TOP|LAYOUT_FILL_X|FRAME_RIDGE|LAYOUT_RIGHT)
         menuPane = FXMenuPane.new(self)
@@ -13,6 +14,13 @@ class Dashboard < FXMainWindow
         o1.connect(SEL_COMMAND) do
             puts "Ver Historial"
         end
+        o2.connect(SEL_COMMAND) do
+            singIn = SingIn.new(@app)
+            singIn.create()
+            singIn.show(PLACEMENT_SCREEN)
+            self.close()
+            puts "Cerrar Sesion"
+        end
         text = FXLabel.new(self,"dato #{dato}", :opts => LAYOUT_CENTER_X)
 
     end
@@ -21,9 +29,3 @@ class Dashboard < FXMainWindow
         show(PLACEMENT_SCREEN)
     end
 end
-=begin
-app = FXApp.new
-Dashboard.new(app)
-app.create
-app.run
-=end
