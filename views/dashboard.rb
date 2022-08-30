@@ -3,7 +3,7 @@ require 'fox16'
 include Fox
 class Dashboard < FXMainWindow
     
-    def initialize(app,dato)
+    def initialize(app,dato=nil)
         @app = app
         super(app, "Qr Generator", :width => 1333, :height => 720)
         menuBar = FXMenuBar.new(self, LAYOUT_SIDE_TOP|LAYOUT_FILL_X|FRAME_RIDGE|LAYOUT_RIGHT)

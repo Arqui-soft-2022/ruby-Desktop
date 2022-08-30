@@ -1,6 +1,9 @@
+#My imports
 require_relative 'userRegister'
 require_relative '../theme/theme'
 require_relative 'dashboard'
+require_relative '../api/api'
+#General imports
 require 'fox16'
 include Fox
 
@@ -15,8 +18,9 @@ class SingIn < FXMainWindow
         :padRight => 10, 
         :padTop => 10, 
         :padBottom => 10)
-        #fondo
-        
+
+        #API initialize
+        @api = API.new()
         #Pantalla inicial
         saludo=FXLabel.new(self, "Bienvenido al Generador de Qr", :opts => LAYOUT_CENTER_X)
         saludo.font = theme.fuenteVerdana250Bold(@app)
@@ -29,18 +33,30 @@ class SingIn < FXMainWindow
         password.helpText="Contraseña"
         password.tipText="Contraseña"
         password.font = theme.fuenteVerdana100(@app)
-        
         iniciarButton = FXButton.new(self, "Iniciar Sesion", :opts => LAYOUT_CENTER_X,:padLeft => 20, :padRight => 20)
         iniciarButton.font = theme.fuenteVerdana150Bold(@app)
         iniciarButton.textColor=theme.whiteColor()
         iniciarButton.backColor=theme.secondaryColor()
         iniciarButton.connect(SEL_COMMAND) do
-            dato="hola"
-            dashboard=Dashboard.new(@app,dato)
-            dashboard.create()
-            dashboard.show(PLACEMENT_SCREEN)
-            self.close()
-            puts "Iniciar Sesion"
+            if usuario.text=="" or password.text==""
+                alert = FXMessageBox.information(self, MBOX_OK, "Error", "Campos vacios")
+            else
+                res = @api.login_user(usuario.text, password.text)
+                res= JSON.parse(res)
+                puts res
+                if res.has_key?("errors")
+                    puts "Usuario o contraseña incorrectos"
+                    alert = FXMessageBox.information(self, MBOX_OK, "Inicio de Sesion", "Usuario o contraseña incorrectos")
+                elsif res.has_key?("usuario")
+                    puts "Inicio de sesion exitoso"
+                    dashboard = Dashboard.new(@app, res)
+                    dashboard.create()
+                    dashboard.show(PLACEMENT_SCREEN)
+                    self.close()
+                else
+                    alert = FXMessageBox.information(self, MBOX_OK, "Inicio de Sesion", "Error, intenta nuevamente")
+                end
+            end
         end
         noCuenta =FXLabel.new(self, "¿Aún no tienes cuenta?", :opts => LAYOUT_CENTER_X, :padLeft => 10, :padRight => 10)
         noCuenta.font = theme.fuenteVerdana100Bold(@app)
