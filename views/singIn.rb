@@ -40,15 +40,12 @@ class SingIn < FXMainWindow
         iniciarButton.connect(SEL_COMMAND) do
             if usuario.text=="" or password.text==""
                 alert = FXMessageBox.information(self, MBOX_OK, "Error", "Campos vacios")
-            else
+            elsif @api.check_connection
                 res = @api.login_user(usuario.text, password.text)
                 res= JSON.parse(res)
-                puts res
                 if res.has_key?("errors")
-                    puts "Usuario o contraseña incorrectos"
                     alert = FXMessageBox.information(self, MBOX_OK, "Inicio de Sesion", "Usuario o contraseña incorrectos")
                 elsif res.has_key?("usuario")
-                    puts "Inicio de sesion exitoso"
                     dashboard = Dashboard.new(@app, res)
                     dashboard.create()
                     dashboard.show(PLACEMENT_SCREEN)
@@ -56,6 +53,8 @@ class SingIn < FXMainWindow
                 else
                     alert = FXMessageBox.information(self, MBOX_OK, "Inicio de Sesion", "Error, intenta nuevamente")
                 end
+            else
+                alert = FXMessageBox.information(self, MBOX_OK, "Error", "No hay conexion al servicio")
             end
         end
         noCuenta =FXLabel.new(self, "¿Aún no tienes cuenta?", :opts => LAYOUT_CENTER_X, :padLeft => 10, :padRight => 10)

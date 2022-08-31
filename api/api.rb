@@ -1,16 +1,19 @@
 require 'faraday'
 require 'faraday/net_http'
 
+
 class API
+    @@base_url = "https://codeqr-generate2.herokuapp.com/"
+    
     def check_connection
-        response = Faraday.get 'https://codeqr-generate.herokuapp.com'
+        response = Faraday.get(@@base_url)
         return response.status == 200 ? true : false
     end
 
 
     def register_user(username, password, email, name)
         
-        url = "https://codeqr-generate.herokuapp.com/api/auth/register"
+        url = @@base_url+"api/auth/register"
 
         form_data = {
             "username": username,
@@ -26,7 +29,7 @@ class API
 
     def login_user(username, password)
 
-        url = "https://codeqr-generate.herokuapp.com/api/auth/login"
+        url = @@base_url+"api/auth/login"
 
         form_data = {
             "username": username,
@@ -41,7 +44,7 @@ class API
 
     def generate_qr(web_url, user_id)
 
-        url = "https://codeqr-generate.herokuapp.com/api/code/"
+        url = @@base_url+"api/code/"
 
         form_data = {
             "url": web_url,
@@ -55,7 +58,7 @@ class API
 
     def historical_qr(id_user)
 
-        url = 'https://codeqr-generate.herokuapp.com/api/code/historial'
+        url = @@base_url+'api/code/historial'
 
         form_data = {
             "user": id_user

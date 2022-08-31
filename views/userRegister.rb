@@ -18,31 +18,51 @@ class UserRegister < FXMainWindow
         FXLabel.new(self, "Email", :opts => LAYOUT_CENTER_X)
         email = FXTextField.new(self,50, :opts => LAYOUT_CENTER_X)
         FXLabel.new(self, "Nombre", :opts => LAYOUT_CENTER_X)
+        
         name= FXTextField.new(self,50, :opts => LAYOUT_CENTER_X)
         registroButton = FXButton.new(self, "Registrar", :opts => LAYOUT_CENTER_X,:padLeft => 20, :padRight => 20)
+        
         registroButton.font = theme.fuenteVerdana150Bold(@app)
         registroButton.textColor= theme.whiteColor()
         registroButton.backColor= theme.secondaryColor()
+
         registroButton.connect(SEL_COMMAND) do
-            res=@api.register_user(user.text, password.text, email.text, name.text)
-            res= JSON.parse(res)
-            puts res
-            if res.has_key?("errors")
-                puts "El usuario ya existe"
-                alert = FXMessageBox.information(self, MBOX_OK, "Registro", "El usuario ya existe")
-            elsif res.has_key?("msg") 
-                puts "Registrado con exito"
-                alert = FXMessageBox.information(self, MBOX_OK, "Registro", "Registro Exitoso")
-                if alert == 3 
-                    singIn = SingIn.new(@app)
-                    singIn.create()
-                    singIn.show(PLACEMENT_SCREEN)
-                    self.close()
+            if user.text=="" or password.text=="" or email.text=="" or name.text==""
+                alert = FXMessageBox.information(self, MBOX_OK, "Error", "Campos vacios")
+            else
+                res=@api.register_user(user.text, password.text, email.text, name.text)
+                res= JSON.parse(res)
+                puts res
+                if res.has_key?("errors")
+                    puts "El usuario ya existe"
+                    alert = FXMessageBox.information(self, MBOX_OK, "Registro", "El usuario ya existe")
+                elsif res.has_key?("msg") 
+                    puts "Registrado con exito"
+                    alert = FXMessageBox.information(self, MBOX_OK, "Registro", "Registro Exitoso")
+                    if alert == 3 
+                        singIn = SingIn.new(@app)
+                        singIn.create()
+                        singIn.show(PLACEMENT_SCREEN)
+                        self.close()
+                    end
+                else 
+                    alert = FXMessageBox.information(self, MBOX_OK, "Registro", "Error, intenta nuevamente")
+                    puts "Error"
                 end
-            else 
-                alert = FXMessageBox.information(self, MBOX_OK, "Registro", "Error, intenta nuevamente")
-                puts "Error"
             end
+        end
+        volverButton = FXButton.new(self, "Volver", :opts => LAYOUT_CENTER_X,:padLeft => 20, :padRight => 20)
+        volverButton.font = theme.fuenteVerdana150Bold(@app)
+        volverButton.textColor= theme.whiteColor()
+        volverButton.backColor= theme.secondaryColor()
+        volverButton.connect(SEL_COMMAND) do
+            puts @api.check_connection()
+=begin
+            singIn = SingIn.new(@app)
+            singIn.create()
+            singIn.show(PLACEMENT_SCREEN)
+            self.close()
+=end
         end
 
     end
