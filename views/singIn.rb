@@ -3,6 +3,7 @@ require_relative 'userRegister'
 require_relative '../theme/theme'
 require_relative 'dashboard'
 require_relative '../api/api'
+require 'base64'
 #General imports
 require 'fox16'
 include Fox
@@ -70,7 +71,6 @@ class SingIn < FXMainWindow
             puts "Registrarse"
         end
     end
-
     def create
         super
         show(PLACEMENT_SCREEN)

@@ -3,6 +3,7 @@ require_relative '../api/api'
 require_relative '../theme/theme'
 require 'fox16'
 include Fox
+REGEXP = /\Adata:([-\w]+\/[-\w\+\.]+)?;base64,(.*)/m
 class Dashboard < FXMainWindow
     
     def initialize(app,user=nil)
@@ -46,18 +47,38 @@ class Dashboard < FXMainWindow
             qrButton.backColor = theme.primaryColor()
             qrButton.font = theme.fuenteVerdana150Bold(@app)
             qrButton.textColor = theme.whiteColor()
-            text=FXLabel.new(self, "#{@qr}", :opts => LAYOUT_CENTER_X)
             qrButton.connect(SEL_COMMAND) do
                 puts userId
-                res = @api.generate_qr(url.text, userId)
-                res= JSON.parse(res)
-                puts res
-                text.text = url.text
-                puts "QR"
+                generarQR(url.text, userId)
             end
+            qrImagen=FXLabel.new(self, "", :opts => LAYOUT_CENTER_X)
+            qrImagen.icon = FXIPng.new(@app, "somefilename.png")
+
+
         end
 
     end
+
+    def generarQR(url,userId)
+        begin
+            temp=@api.generate_qr(url,userId)
+            temp = JSON.parse(temp)            
+            qr = temp['qr_code']['url_code'] #la peticion post me retorna un json con varios valores el cual solo interesa la llave url_code cuyo  valor es un codigo base64  que se generó a partir de la url el cual hay que convertir a imagen            
+            convert(qr)
+        rescue => e
+            puts e , 'URL incorrecta'
+        end
+    end
+
+    def convert(qr)
+        image_data = Base64.decode64(qr['data:image/png;base64,'.length .. -1])
+        new_file=File.new("somefilename.png", 'wb')
+        new_file.write(image_data)
+        
+    end 
+
+
+
     def create
         super
         show(PLACEMENT_SCREEN)
