@@ -52,6 +52,13 @@ class DashboardQr < FXMainWindow
             @icono = FXPNGIcon.new(@app, File.open("qr.png", "rb").read)
             @qrImagen = FXLabel.new(self,"", :opts => LAYOUT_CENTER_X)
             @qrImagen.icon = @icono
+            exportButton = FXButton.new(self, "Exportar", :opts => LAYOUT_CENTER_X,:padLeft => 20, :padRight => 20)
+            exportButton.backColor = theme.primaryColor()
+            exportButton.font = theme.fuenteVerdana150Bold(@app)
+            exportButton.textColor = theme.whiteColor()
+            exportButton.connect(SEL_COMMAND) do
+                puts "Exportar"
+            end
         end
     end
     def generarQR(url,userId,name)

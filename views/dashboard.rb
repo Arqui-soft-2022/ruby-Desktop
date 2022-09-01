@@ -24,6 +24,9 @@ class Dashboard < FXMainWindow
         o1.connect(SEL_COMMAND) do
             puts "Ver Historial"
             h = History.new(@app, userId, name,false)
+            h.create()
+            h.show(PLACEMENT_SCREEN)
+            self.close()
 
         end
         o2.connect(SEL_COMMAND) do
@@ -61,14 +64,9 @@ class Dashboard < FXMainWindow
             exportButton.textColor = theme.whiteColor()
             exportButton.connect(SEL_COMMAND) do
                 puts "Exportar"
-                exportQR()
             end
         end
-    end
-    def exportQR()
-        File.dirname("qr.png")
-        
-    end
+    end   
     def generarQR(url,userId,name)
         begin
             temp=@api.generate_qr(url,userId)

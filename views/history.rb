@@ -28,9 +28,8 @@ class History < FXMainWindow
             self.close()
             puts "Cerrar Sesion"
         end
-        FXLabel.new(self, "Bienvenido #{name}", :opts => LAYOUT_CENTER_X)
-        FXLabel.new(self, "Genere su Codigo QR", :opts => LAYOUT_CENTER_X)
-        FXLabel.new(self, "Sitio Web (URL)", :opts => LAYOUT_CENTER_X)
+        FXLabel.new(self, "Codigos Qr Generados de #{name}", :opts => LAYOUT_CENTER_X)
+        
     end
     def create
         super
