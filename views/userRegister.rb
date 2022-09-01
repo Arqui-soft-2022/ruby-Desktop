@@ -56,13 +56,10 @@ class UserRegister < FXMainWindow
         volverButton.textColor= theme.whiteColor()
         volverButton.backColor= theme.secondaryColor()
         volverButton.connect(SEL_COMMAND) do
-            puts @api.check_connection()
-=begin
             singIn = SingIn.new(@app)
             singIn.create()
             singIn.show(PLACEMENT_SCREEN)
             self.close()
-=end
         end
 
     end

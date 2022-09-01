@@ -9,7 +9,6 @@ class Dashboard < FXMainWindow
     def initialize(app,user=nil)
         #API initialize
         @api = API.new()
-
         user =user["usuario"]
         name = user["name"]
         userId = user["id_usuario"]
@@ -51,10 +50,9 @@ class Dashboard < FXMainWindow
                 puts userId
                 generarQR(url.text, userId)
             end
-            qrImagen=FXLabel.new(self, "", :opts => LAYOUT_CENTER_X)
-            qrImagen.icon = FXIPng.new(@app, "somefilename.png")
-
-
+            @icono = FXPNGIcon.new(@app, File.open("logo.png", "rb").read)
+            @qrImagen = FXLabel.new(self,"", :opts => LAYOUT_CENTER_X)
+            @qrImagen.icon = @icono
         end
 
     end
@@ -72,9 +70,12 @@ class Dashboard < FXMainWindow
 
     def convert(qr)
         image_data = Base64.decode64(qr['data:image/png;base64,'.length .. -1])
-        new_file=File.new("somefilename.png", 'wb')
+        new_file=File.new("qr.png", 'wb')
         new_file.write(image_data)
-        
+        i = FXPNGIcon.new(@app, File.open("qr.png", "rb").read)
+        l=FXLabel.new(self,"", :opts => LAYOUT_CENTER_X)
+        l.icon = i
+        @qrImagen=l
     end 
 
 
