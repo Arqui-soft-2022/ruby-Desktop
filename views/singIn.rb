@@ -44,10 +44,13 @@ class SingIn < FXMainWindow
             elsif @api.check_connection
                 res = @api.login_user(usuario.text, password.text)
                 res= JSON.parse(res)
+                name = res["usuario"]["name"]
+                userId= res["usuario"]["id_usuario"]
+                puts "#{name} #{userId}"
                 if res.has_key?("errors")
                     alert = FXMessageBox.information(self, MBOX_OK, "Inicio de Sesion", "Usuario o contraseña incorrectos")
                 elsif res.has_key?("usuario")
-                    dashboard = Dashboard.new(@app, res)
+                    dashboard = Dashboard.new(@app, userId, name,true)
                     dashboard.create()
                     dashboard.show(PLACEMENT_SCREEN)
                     self.close()

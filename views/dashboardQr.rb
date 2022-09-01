@@ -1,15 +1,14 @@
 require_relative 'singIn'
 require_relative '../api/api'
 require_relative '../theme/theme'
-require_relative 'dashboardQr'
-require_relative 'history'
+require_relative 'dashboard'
 require 'fox16'
 include Fox
 REGEXP = /\Adata:([-\w]+\/[-\w\+\.]+)?;base64,(.*)/m
-class Dashboard < FXMainWindow
+class DashboardQr < FXMainWindow
     def initialize(app, userId, name,state)
         
-        puts "Dashboard state: #{state} name: #{name} userId: #{userId}"
+        puts "DashboardQr state: #{state} name: #{name} userId: #{userId}"
         #API initialize
         @api = API.new()
         @app = app
@@ -23,8 +22,6 @@ class Dashboard < FXMainWindow
         o2=FXMenuCommand.new(menuPane, "Cerrar Sesion")
         o1.connect(SEL_COMMAND) do
             puts "Ver Historial"
-            h = History.new(@app, userId, name,false)
-
         end
         o2.connect(SEL_COMMAND) do
             singIn = SingIn.new(@app)
@@ -55,19 +52,7 @@ class Dashboard < FXMainWindow
             @icono = FXPNGIcon.new(@app, File.open("qr.png", "rb").read)
             @qrImagen = FXLabel.new(self,"", :opts => LAYOUT_CENTER_X)
             @qrImagen.icon = @icono
-            exportButton = FXButton.new(self, "Exportar", :opts => LAYOUT_CENTER_X,:padLeft => 20, :padRight => 20)
-            exportButton.backColor = theme.primaryColor()
-            exportButton.font = theme.fuenteVerdana150Bold(@app)
-            exportButton.textColor = theme.whiteColor()
-            exportButton.connect(SEL_COMMAND) do
-                puts "Exportar"
-                exportQR()
-            end
         end
-    end
-    def exportQR()
-        File.dirname("qr.png")
-        
     end
     def generarQR(url,userId,name)
         begin
@@ -82,12 +67,12 @@ class Dashboard < FXMainWindow
     def convert(qr,userId,name)
         image_data = Base64.decode64(qr['data:image/png;base64,'.length .. -1])
         new_file=File.new("qr.png", 'wb')
-        new_file.write(image_data)
+        new_file.write(image_data)    
         new_file.close()
         goTo(userId,name)    
     end 
     def goTo(userId,name)
-        d = DashboardQr.new(@app, userId, name,false)
+        d = Dashboard.new(@app, userId, name,false)
         d.create()
         d.show(PLACEMENT_SCREEN)
         self.close()
